@@ -6,13 +6,13 @@
 /*   By: cvermand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/22 21:33:09 by cvermand          #+#    #+#             */
-/*   Updated: 2017/11/23 16:13:40 by cvermand         ###   ########.fr       */
+/*   Updated: 2017/11/24 15:54:15 by cvermand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-# define BUFF_SIZE 16
+# define BUFF_SIZE 120
 # include <fcntl.h>
 # include "libft/libft.h"
 # include <stdio.h>

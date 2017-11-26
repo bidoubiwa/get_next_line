@@ -6,13 +6,13 @@
 /*   By: cvermand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/22 21:33:09 by cvermand          #+#    #+#             */
-/*   Updated: 2017/11/24 15:54:15 by cvermand         ###   ########.fr       */
+/*   Updated: 2017/11/26 23:45:34 by cvermand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-# define BUFF_SIZE 120
+# define BUFF_SIZE 2
 # include <fcntl.h>
 # include "libft/libft.h"
 # include <stdio.h>
@@ -22,7 +22,7 @@
 typedef struct 	s_fd
 {
 	size_t			fd;
-	int				line;
+	char			*str;
 	struct s_fd		*next;
 }				t_fd;	
 

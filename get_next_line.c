@@ -5,118 +5,143 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: cvermand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/22 21:32:27 by cvermand          #+#    #+#             */
-/*   Updated: 2017/11/24 16:29:13 by cvermand         ###   ########.fr       */
+/*   Created: 2017/11/26 16:01:33 by cvermand          #+#    #+#             */
+/*   Updated: 2017/11/27 00:01:55 by cvermand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "get_next_line.h"
 
-t_info	*get_fd(const int fd, t_info **info)
-{
-	if(!(*info = (t_info*)malloc(sizeof(t_info))))
-		return (NULL);
-	(*info)->str = *str;
-	(*info)->i = 0;
-	(*info)->len = 0;
-	(*info)->ret = 0;
-	/*while ((*list))
-	{
-		if ((*list)->content_size == fd)
-			return ((*list)->content);
-	}
-	tmp = ft_lstnew(fd, 0);
-	last = ft_lstlast(t_list *list);
-	last->next = tmp;*/
-	return (*info);
-}
+// Fonction qui decoupe buffer avec le premier \n
+//
+// Fonction qui read
+//
+// fonction qui initialise la structure
+//
+// fonction qui rempi liste chainee et renvoie string
 
-
-static char	*ft_check_old_buff(char *str, size_t *len, t_info *inf, char **line)
+static	char	*ft_read(t_fd *current, int fd, char **line, int *state)
 {
-	char	*new;
+	char	buf[BUFF_SIZE];
+	int		ret;
+	int		len;
 	char	*tmp;
-	int		i;
+	char	*str_tmp;
 
-	i = 0;
-	if (str)
+	while ((ret = read(fd, buf, BUFF_SIZE)))
 	{
-		while (str[i] != '\0')
+		buf[ret] =  '\0';	
+		if ((tmp = ft_strchr(buf,'\n')))
 		{
-			if (str[i] == '\n')
-			{
-				new = ft_strsub(str,0, i);
-				if (str[i + 1] == '\0')
-					tmp = ft_strnew(0);
-				else
-					tmp = ft_strsub(str, i + 1, ft_strlen(str) - i - 1);
-				free(str);
-				str = tmp;
-				inf->ret = 1;
-				*line = str;
-				return (new);
-			}
-			i++;
+			if (!(*line = ft_strsub(buf, 0, ft_strlen(buf) - ft_strlen(tmp))))
+				return (NULL);
+			if (!(*line = ft_strjoin(current->str, *line)))
+				return (NULL);
+//			dprintf(1,"current line after line merge : %s\n", *line);
+			str_tmp = current->str;
+			if (!(current->str = ft_strsub(tmp, 1, ft_strlen(tmp) - 1)))
+				return (NULL);
+			ft_strdel(&str_tmp);
+			*state = 1; 
+			return (*line);
 		}
-		new = ft_strdup(str);
-		*len = ft_strlen(str);
-		free(str);
-		str = NULL;
-		return (new);
+		else if (ret < BUFF_SIZE)
+		{
+			if(!(*line = ft_strjoin(current->str, buf)))
+				return (NULL);
+			ft_strdel(&current->str);
+			*state = 0;
+			return (*line);
+		}
+		if(!(current->str = ft_strjoin(current->str, buf)))
+			return (NULL);
 	}
-	*len = 0;
-	new = ft_strnew(0);
-	return (new);	
+	if (!(*line = ft_strdup(current->str)))
+		return (NULL);
+	*state = 0;
+	return (*line);
 }
 
-int		get_next_line(const int fd, char **line)
+static	int		ft_read_buff(t_fd *current, int fd, char **line)
 {
+	char	*origin;
+	char	*tmp;
+	int		ret;
 
-	//t_list	**file;
-	t_list		*i;
-	static char	*str;
-	char		*new;
-	char		buf[BUFF_SIZE];
-	int			ret;
-	int			i;
-	size_t		len;
-
-	if (fd == -1)
-		return (0);
-	i = get_fd(fd, list, &i);
-	new = ft_check_old_buff(str, &len, i, line);
-	if (ret)
+	ret = 0;
+	origin = current->str;
+	if ((tmp = ft_strchr(origin, '\n')))
 	{
-		str = *line;
-		*line = new;
+		if (!(*line = ft_strsub(origin, 0, tmp - origin)))
+			return (-1);
+		if (!(current->str =  ft_strsub(tmp, 1, ft_strlen(tmp) - 1)))
+			return (-1);
+		ft_strdel(&origin);
+	}
+	else
+	{
+		if(!(*line = ft_read(current,fd, line, &ret)) || ret < 0 )
+			return (-1);
+	//	dprintf(1,"current line dans ft_read_buff : %s\n", *line);
+		return (ret);
+	}
+	return (ret);
+}
+
+static	t_fd	*ft_fill_struct(const int fd, t_fd *tmp, char *str)
+{
+	tmp->str = str;
+	tmp->fd = fd;
+	return (tmp);
+}
+
+static	int		ft_get_fd_struct(const int fd, t_fd **begin, t_fd **current)
+{
+	t_fd	*previous;
+	t_fd	*tmp;
+
+	tmp = *begin;
+	if (!tmp)
+	{
+		if (!(tmp = ft_memalloc(sizeof(t_fd))))
+			return (-1);
+		(*current) = ft_fill_struct(fd, tmp, ft_strnew(0));
+		*begin = tmp;
 		return (1);
 	}
-	while ((i->ret = read(fd, buf, BUFF_SIZE)))
+	while (*current)
 	{
-		i->i = 0;
-		while (buf[i->i] && buf[i->i] != EOF && buf[i->i] != '\n' && i->i < i->ret)
-		{
-			i->len++;
-			i->i++;
-		}
-		if (!buf[i] || buf[i] == EOF || i == BUFF_SIZE)
-		{
-			str = ft_strnew(i->len);
-			ft_strlcat(ft_strcpy(i->str, new), buf, i->len + 1);
-			new = str;
-		}
-		else
-			break ;
+		if ((*current)->fd == fd)
+			return (1);
+		previous = (*current);
+		*current = (*current)->next;
 	}
-	str = ft_strnew(i->len);
-	ft_strlcat(ft_strcpy(str, new), buf, i->len + 1);
-	new = str;
-	if (buf[i->i] == '\n')
-		i->i++;
-	if (i->i < BUFF_SIZE && buf[i->i + 1])
-		str = ft_strsub(&buf[i->i], 0, i->ret - i->i);
-	else
-		str = NULL;
-	*line = new;
-	return (0);
+	if (!(tmp = ft_memalloc(sizeof(t_fd))))
+		return (-1);
+	*current = ft_fill_struct(fd, tmp, ft_strnew(0));
+	previous->next = *current;
+	return (1);
+}
+
+int				get_next_line(const int fd, char **line)
+{
+	static t_fd		*list;
+	t_fd			*current;
+	int				state;
+	char			test[1];			
+	
+	*line = NULL;
+	current = list;
+	if (fd < 0 || (ft_get_fd_struct(fd, &list, &current)) < 0)
+		return (-1);
+	if (!current->str)
+	{
+		if(!(current->str = ft_strnew(0)))
+			return (-1);
+	}
+	state = ft_read_buff(current, fd, line);	
+//	dprintf(1, "line :  %s\n", *line);
+	//dprintf(1, "current :  %s\n", current->str);
+	return (state);
 }

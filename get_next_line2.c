@@ -6,7 +6,7 @@
 /*   By: cvermand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/26 16:01:33 by cvermand          #+#    #+#             */
-/*   Updated: 2017/11/27 22:54:38 by cvermand         ###   ########.fr       */
+/*   Updated: 2017/11/27 21:51:04 by cvermand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,51 +20,43 @@
 //
 // fonction qui rempi liste chainee et renvoie string
 
-static	int		ft_found_newline(t_fd *current, char *buf,
-		int ret, char **line)
+static	int		ft_found_newline(t_fd *current, char *buf, 
+		char *tmp, char **line)
 {
 	char *str_tmp;
-	char *tmp;
 
-	if ((tmp = ft_strchr(buf, '\n')))
-	{
-		if (!(*line = ft_strsub(buf, 0, ft_strlen(buf) - ft_strlen(tmp))))
-			return (-1);
-		str_tmp = *line;
-		if (!(*line = ft_strjoin(current->str, *line)))
-			return (-1);
-		ft_strdel(&str_tmp);
-		str_tmp = current->str;
-		if (!(current->str = ft_strsub(tmp, 1, ft_strlen(tmp) - 1)))
-			return (-1);
-		ft_strdel(&str_tmp);
-		ft_strdel(&buf);
-		return (1);
-	}
-	else if (ret < BUFF_SIZE)
-	{
-		if (!(*line = ft_strjoin(current->str, buf)))
-			return (-1);
-		ft_strdel(&current->str);
-		ft_strdel(&buf);
-		return (1);
-	}
-	return (0);
+	if (!(*line = ft_strsub(buf, 0, ft_strlen(buf) - ft_strlen(tmp))))
+		return (-1);
+	str_tmp = *line;
+	if (!(*line = ft_strjoin(current->str, *line)))
+		return (-1);
+	ft_strdel(&str_tmp);
+	str_tmp = current->str;
+	if (!(current->str = ft_strsub(tmp, 1, ft_strlen(tmp) - 1)))
+		return (-1);
+	ft_strdel(&str_tmp);
+	return (1);
 }
 
 static	int		ft_read(t_fd *current, int fd, char **line, int *r)
 {
-	char	*buf;
+	char	buf[BUFF_SIZE + 1];
 	int		ret;
 	char	*tmp;
 
-	if (!(buf = ft_strnew(BUFF_SIZE)))
-		return (-1);
+	r = 0;
 	while ((ret = read(fd, buf, BUFF_SIZE)))
 	{
 		buf[ret] = '\0';
-		if ((ret = ft_found_newline(current, buf, ret, line)) != 0)
-			return (ret);
+		if ((tmp = ft_strchr(buf, '\n')))
+			return (ft_found_newline(current, buf, tmp, line));
+		else if (ret < BUFF_SIZE)
+		{
+			if (!(*line = ft_strjoin(current->str, buf)))
+				return (-1);
+			ft_strdel(&current->str);
+			return (1);
+		}
 		tmp = current->str;
 		if (!(current->str = ft_strjoin(current->str, buf)))
 			return (-1);
@@ -75,7 +67,6 @@ static	int		ft_read(t_fd *current, int fd, char **line, int *r)
 		if (!(*line = ft_strdup(current->str)))
 			return (-1);
 		ft_strdel(&current->str);
-		ft_strdel(&buf);
 		return (1);
 	}
 	return ((*line = current->str) ? 0 : -1);

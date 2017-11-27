@@ -6,7 +6,7 @@
 /*   By: cvermand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/22 21:33:09 by cvermand          #+#    #+#             */
-/*   Updated: 2017/11/26 23:45:34 by cvermand         ###   ########.fr       */
+/*   Updated: 2017/11/27 13:59:33 by cvermand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 
 typedef struct 	s_fd
 {
-	size_t			fd;
+	int				fd;
 	char			*str;
 	struct s_fd		*next;
 }				t_fd;	

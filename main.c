@@ -6,7 +6,7 @@
 /*   By: cvermand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/22 21:41:08 by cvermand          #+#    #+#             */
-/*   Updated: 2017/11/26 23:44:20 by cvermand         ###   ########.fr       */
+/*   Updated: 2017/11/27 18:04:12 by cvermand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 // A NE PAS RENDRE
@@ -14,7 +14,7 @@
 
 int		main(int ac, char	**av)
 {
-	char	*str;
+	char	*str = NULL;
 	int		fd;
 	int		fd2;
 	int 	ret;
@@ -25,7 +25,7 @@ int		main(int ac, char	**av)
 		return (0);
 	if ((fd2 = open(av[2], O_RDONLY)) == -1)
 		return (0);
-	ret = get_next_line(fd,&str);
+	ret = get_next_line(-99,((void *)0));
 	dprintf(1,"res : %s, ret : %d\n",str, ret);
 	ret = get_next_line(fd,&str);
 	dprintf(1,"res : %s, ret : %d\n",str, ret);
@@ -41,6 +41,14 @@ int		main(int ac, char	**av)
 	dprintf(1,"res : %s, ret: %d\n",str, ret);
 	ret = get_next_line(fd,&str);
 	dprintf(1,"res : %s, ret: %d\n",str, ret);
+	ret = get_next_line(fd2,&str);
+	dprintf(1,"res : %s, ret : %d\n",str, ret);
+	ret = get_next_line(fd2,&str);
+	dprintf(1,"res : %s, ret : %d\n",str, ret);
+	ret = get_next_line(fd2,&str);
+	dprintf(1,"res : %s, ret : %d\n",str, ret);
+	ret = get_next_line(fd2,&str);
+	dprintf(1,"res : %s, ret : %d\n",str, ret);
 	ret = get_next_line(fd2,&str);
 	dprintf(1,"res : %s, ret : %d\n",str, ret);
 

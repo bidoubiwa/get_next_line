@@ -6,19 +6,11 @@
 /*   By: cvermand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/26 16:01:33 by cvermand          #+#    #+#             */
-/*   Updated: 2017/11/27 22:54:38 by cvermand         ###   ########.fr       */
+/*   Updated: 2017/11/30 13:40:39 by cvermand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-// Fonction qui decoupe buffer avec le premier \n
-//
-// Fonction qui read
-//
-// fonction qui initialise la structure
-//
-// fonction qui rempi liste chainee et renvoie string
 
 static	int		ft_found_newline(t_fd *current, char *buf,
 		int ret, char **line)
@@ -37,9 +29,7 @@ static	int		ft_found_newline(t_fd *current, char *buf,
 		str_tmp = current->str;
 		if (!(current->str = ft_strsub(tmp, 1, ft_strlen(tmp) - 1)))
 			return (-1);
-		ft_strdel(&str_tmp);
-		ft_strdel(&buf);
-		return (1);
+		return (ft_strdel_n(&str_tmp) && ft_strdel_n(&buf));
 	}
 	else if (ret < BUFF_SIZE)
 	{
@@ -76,7 +66,7 @@ static	int		ft_read(t_fd *current, int fd, char **line, int *r)
 			return (-1);
 		ft_strdel(&current->str);
 		ft_strdel(&buf);
-		return (1);
+		return (*r = 1);
 	}
 	return ((*line = current->str) ? 0 : -1);
 }

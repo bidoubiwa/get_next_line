@@ -6,7 +6,7 @@
 /*   By: cvermand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/22 21:33:09 by cvermand          #+#    #+#             */
-/*   Updated: 2017/11/27 22:21:59 by cvermand         ###   ########.fr       */
+/*   Updated: 2017/11/30 14:08:04 by cvermand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,12 @@
 # include <sys/types.h>
 # include <sys/stat.h>
 
-typedef struct 	s_fd
+typedef struct		s_fd
 {
 	int				fd;
 	char			*str;
 	struct s_fd		*next;
-}				t_fd;	
+}					t_fd;
 
-int		get_next_line(const int fd, char **line);
+int					get_next_line(const int fd, char **line);
 #endif
